@@ -18,6 +18,7 @@
 package com.spotify.featran.spark
 
 import com.spotify.featran._
+import com.twitter.algebird.SketchMapParams
 import org.apache.spark.SparkContext
 import org.scalatest._
 
@@ -25,6 +26,7 @@ class SparkTest extends FlatSpec with Matchers {
 
   import Fixtures._
 
+  /*
   "FeatureSpec" should "work with Spark" in {
     val sc = new SparkContext("local[4]", "test")
     val f = testSpec.extract(sc.parallelize(testData))
@@ -32,15 +34,37 @@ class SparkTest extends FlatSpec with Matchers {
     f.featureValues[Seq[Double]].collect() should contain theSameElementsAs expectedValues
     sc.stop()
   }
+  */
 
-  it should "work with MultiFeatureSpec" in {
-    noException shouldBe thrownBy {
-      val sc = new SparkContext("local[4]", "test")
+//  it should "work with MultiFeatureSpec" in {
+//    noException shouldBe thrownBy {
+//      val sc = new SparkContext("local[4]", "test")
+//      val f = recordSpec.extract(sc.parallelize(records))
+//      f.featureNames.collect()
+//      f.featureValues[Seq[Double]].collect()
+//      sc.stop()
+//    }
+//  }
+
+  it should "debug" in {
+    val p = SketchMapParams[String](1, 0.01, 0.01, 100)(_.getBytes)
+    import _root_.java.io._
+    val baos = new ByteArrayOutputStream()
+    val oos = new ObjectOutputStream(baos)
+    oos.writeObject(p)
+    val sc = new SparkContext("local[4]", "test")
+    try {
       val f = recordSpec.extract(sc.parallelize(records))
       f.featureNames.collect()
       f.featureValues[Seq[Double]].collect()
+    } catch {
+      case e: Throwable =>
+        e.printStackTrace()
+        throw e
+    } finally {
       sc.stop()
     }
+
   }
 
 }
