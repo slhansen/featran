@@ -73,6 +73,15 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
                  (t: Transformer[A, _, _]): FeatureSpec[T] =
     new FeatureSpec[T](this.features :+ new Feature(f, default, t), this.crossings)
 
+  def requiredWithStats[A: StatsCollector](f: T => A)(t: Transformer[A, _, _]): FeatureSpec[T] =
+    optionalWithStats(t => Some(f(t)))(t)
+
+  def optionalWithStats[A: StatsCollector](f: T => Option[A], default: Option[A] = None)
+                                          (t: Transformer[A, _, _]): FeatureSpec[T] =
+    new FeatureSpec[T](
+      this.features :+ new Feature(f, default, t, implicitly[StatsCollector[A]]),
+      this.crossings)
+
   /**
    * Cross feature values of two underlying transformers.
    * @param k names of transformers to be crossed
@@ -113,7 +122,8 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
 
 private class Feature[T, A, B, C](val f: T => Option[A],
                                   val default: Option[A],
-                                  val transformer: Transformer[A, B, C])
+                                  val transformer: Transformer[A, B, C],
+                                  val statsCollector: StatsCollector[A] = null)
   extends Serializable {
 
   def get(t: T): Option[A] = f(t).orElse(default)
