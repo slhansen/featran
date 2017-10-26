@@ -29,7 +29,6 @@ import org.scalacheck._
 @State(Scope.Thread)
 class HotEncoderTransformersBenchmark {
 
-
   //
   // N HOT - optional
   //
@@ -37,8 +36,8 @@ class HotEncoderTransformersBenchmark {
   def nHotOptionalEncoder: Unit = nHotOptional(arbitraryListString)
 
   @Benchmark
-  def nHotOptionalEncoder1000Values: Unit = nHotOptional(arbitraryListString1000Values)
-
+  def nHotOptionalEncoder1000Values: Unit =
+    nHotOptional(arbitraryListString1000Values)
 
   //
   // N HOT - required
@@ -62,7 +61,6 @@ class HotEncoderTransformersBenchmark {
   def nHotRequiredEncoder1000SameValues: Unit =
     nHotRequired(arbitraryListString1000SameValues)
 
-
   //
   // N HOT - transform optional to list
   //
@@ -78,7 +76,6 @@ class HotEncoderTransformersBenchmark {
   def nHotRequiredWithListMatch1000Values: Unit =
     nHotRequiredWithListMatchPrepare(arbitraryListOptional1000Values)
 
-
   //
   // ONE HOT - required
   //
@@ -86,8 +83,8 @@ class HotEncoderTransformersBenchmark {
   def oneHotRequiredEncoder: Unit = oneHotRequired(arbitraryString)
 
   @Benchmark
-  def oneHotRequiredEncoder1000Values: Unit = oneHotRequired(arbitraryString1000Values)
-
+  def oneHotRequiredEncoder1000Values: Unit =
+    oneHotRequired(arbitraryString1000Values)
 
   //
   // ONE HOT - optional
@@ -111,7 +108,6 @@ class HotEncoderTransformersBenchmark {
   def oneHotOptionalEncoder1000SameValues: Unit =
     oneHotOptional(arbitraryString1000SameValues)
 
-
   def nHotOptional(
       input: List[List[String]]): FeatureExtractor[List, List[String]] = {
     val featureSpec = FeatureSpec
@@ -124,7 +120,7 @@ class HotEncoderTransformersBenchmark {
   }
 
   def nHotRequired(
-                    input: List[List[String]]): FeatureExtractor[List, List[String]] = {
+      input: List[List[String]]): FeatureExtractor[List, List[String]] = {
     val featureSpec = FeatureSpec
       .of[List[String]]
       .required(identity)(NHotEncoder("n_hot"))
@@ -136,7 +132,7 @@ class HotEncoderTransformersBenchmark {
     val listInput = input.map {
       case Some("") => List()
       case Some(i)  => List(i)
-      case _ => List()
+      case _        => List()
     }
     val featureSpec = FeatureSpec
       .of[List[String]]
