@@ -220,3 +220,19 @@ lazy val tensorflow: Project = Project(
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
   )
 ).dependsOn(core)
+
+lazy val featranJmh: Project = Project(
+  "featran-jmh",
+  file("featran-jmh")
+).settings(
+  commonSettings ++ noPublishSettings,
+  description := "Featran JMH Microbenchmarks",
+  sourceDirectory in Jmh := (sourceDirectory in Test).value,
+  classDirectory in Jmh := (classDirectory in Test).value,
+  dependencyClasspath in Jmh := (dependencyClasspath in Test).value,
+  libraryDependencies ++= Seq(
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
+  )
+).dependsOn(
+  core
+).enablePlugins(JmhPlugin)
